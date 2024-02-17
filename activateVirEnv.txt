@@ -1,0 +1,32 @@
+0) Update Pip
+pip install --upgrade pip
+
+
+1) Create New Virtural Envir. (when first starting up -- you can use any name)
+python -m venv venvName
+
+
+2) Activate Virtual Envir. 
+source venvName/Scripts/activate
+
+
+3) Install Packages inside it 
+python -m pip install <package-name>
+
+
+4) Deactivate Virtual Envir.
+deactivate
+
+
+
+From:
+https://realpython.com/python-virtual-environments-a-primer/
+
+
+
+Virtual link:
+cd venv/lib/python2.7 && ln -s /usr/local/lib/python2.7/dist-packages/cv2.so
+cd venv/lib/python2.7 && ln -s /usr/local/lib/python2.7/dist-packages/cv.py
+
+cd venv1/lib/python3.8 && ln -s /usr/local/lib/python3.8/dist-packages/cv2.so
+cd venv1/lib/python3.8 && ln -s /usr/local/lib/python3.8/dist-packages/cv.py
