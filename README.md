@@ -1,7 +1,7 @@
 # Motion-Extraction
 With a very simple trick you can extract the motion of a video. Uses python and OpenCV
-> Inspired by href{this}{https://youtu.be/NSS6yAMZF78} video by Posy
-
+> Inspired by <a href="https://youtu.be/NSS6yAMZF78"> this </a> video by Posy
+<!-- CTRL SHIFT V to preview md in vscode -->
 Ideas:
 - maybe combine the two while loops?
 - invert then immediatly overlay?
