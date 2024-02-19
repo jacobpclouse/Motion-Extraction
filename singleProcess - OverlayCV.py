@@ -1,3 +1,6 @@
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Importing Libraries / Modules 
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 import cv2
 import os
 import sys
@@ -5,8 +8,27 @@ import datetime
 from pathlib import Path
 
 
-OUTPUT_FOLDER = 'OUTPUTS'
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Variables
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+OUTPUT_FOLDER = 'OUTPUTS' # folder where all the output files should be stored
 
+
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+# Functions
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+# --- Function to print out my Logo ---
+def myLogo():
+    print("Created and Tested by: ")
+    print("   __                  _         ___ _                       ")
+    print("   \ \  __ _  ___ ___ | |__     / __\ | ___  _   _ ___  ___  ")
+    print("    \ \/ _` |/ __/ _ \| '_ \   / /  | |/ _ \| | | / __|/ _ \ ")
+    print(" /\_/ / (_| | (_| (_) | |_) | / /___| | (_) | |_| \__ \  __/ ")
+    print(" \___/ \__,_|\___\___/|_.__/  \____/|_|\___/ \__,_|___/\___| ")
+    print("Dedicated to Peter Zlomek and Harley Alderson III")
+
+# --- Function to create a folder if it does not exist ---
 def create_folder_if_not_exists(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
@@ -18,7 +40,6 @@ def create_folder_if_not_exists(folder_path):
 def emptyFolder(directoryPath):
     [f.unlink() for f in Path(directoryPath).glob("*") if f.is_file()] 
 
-
 # --- Function to Defang date time ---
 def defang_datetime():
     current_datetime = f"_{datetime.datetime.now()}"
@@ -29,6 +50,7 @@ def defang_datetime():
     
     return current_datetime
 
+# --- Function to look for and delete specific videos ---
 def delete_videos():
     videos = [
         "Out60_video.mp4",
@@ -43,12 +65,13 @@ def delete_videos():
         except FileNotFoundError:
             print(f"{video} not found, skipping deletion")
 
+# --- Function to take target video name in from the command line ---
 def returnVid():
     incomingVid = sys.argv[1]
     return incomingVid
 
 
-# --- Function to invert previous frame and compare to present
+# --- Function to invert previous frame and compare to present ---
 def invertVideoFunc(inputVideoName):
     # Open the video file
     # video_capture = cv2.VideoCapture('input_video.mp4')
@@ -184,9 +207,9 @@ def variableExposureInvertFunc(inputVideoName, numFramesToCompareTo):
     cv2.destroyAllWindows()
 
 
-
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # MAIN
-
+# =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 delete_videos()
 
 thisVideo = returnVid()
