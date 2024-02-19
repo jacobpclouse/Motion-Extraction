@@ -12,7 +12,7 @@ from pathlib import Path
 # Variables
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 OUTPUT_FOLDER_NAME = 'OUTPUTS' # folder where all the output files should be stored
-show_live_output = True # show live output
+
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Functions
@@ -68,10 +68,14 @@ def invertVideoFunc(inputVideoName,outputFolder):
     # Get the codec of the input video
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
-
-    # Define output video writer
     namePathOrigFPS = os.path.join(outputFolder,f'Out_{fps}fps_video--@DEFAULT_1_frame_delay.mp4')
     namePath60FPS = os.path.join(outputFolder,f'Out_60fps_video--@DEFAULT_1_frame_delay.mp4')
+    # namePathOrigFPS = os.path.join(outputFolder,f'Out{fps}_video.mp4')
+    # namePath60FPS = os.path.join(outputFolder,f'Out60_video.mp4')
+
+    # Define output video writer
+    # output_video = cv2.VideoWriter(f'Out{fps}_video.mp4', fourcc, fps, (int(video_capture.get(3)), int(video_capture.get(4))))
+    # Out60_video = cv2.VideoWriter('Out60_video.mp4', fourcc, 60, (int(video_capture.get(3)), int(video_capture.get(4))))
     originalFPS_OutVideo = cv2.VideoWriter(namePathOrigFPS, fourcc, fps, (int(video_capture.get(3)), int(video_capture.get(4))))
     modified60FPS_OutVideo = cv2.VideoWriter(namePath60FPS, fourcc, 60, (int(video_capture.get(3)), int(video_capture.get(4))))
 
@@ -96,14 +100,13 @@ def invertVideoFunc(inputVideoName,outputFolder):
 
             # maybe ask user if they want to see this?
 
-            if show_live_output == True:
-                # Display the overlaid frame
-                # cv2.imshow('Overlay', overlay)
-                cv2.imshow('DEFAULT 1 frame Delay - Overlay', overlay)
-                
-                # Press 'q' to quit
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            # Display the overlaid frame
+            # cv2.imshow('Overlay', overlay)
+            cv2.imshow('DEFAULT 1 frame Delay - Overlay', overlay)
+            
+            # Press 'q' to quit
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
             # Update the previous frame
             frame1 = frame2
@@ -131,17 +134,18 @@ def variableExposureInvertFunc(inputVideoName,outputFolder,numFramesToCompareTo)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
     namePathOrigFPS = os.path.join(outputFolder,f'Out_{fps}fps_video--@{numFramesToCompareTo}_frame_delay.mp4')
-    namePath60FPS = os.path.join(outputFolder,f'Out_60fps_video--@{numFramesToCompareTo}_frame_delay.mp4')
+    namePath60FPS = os.path.join(outputFolder,f'Out_60fps_video--@{numFramesToCompareTo}_frame_delay.mp4.mp4')
 
     # Define output video writer
-    originalFPS_OutVideo = cv2.VideoWriter(namePathOrigFPS, fourcc, fps, (int(video_capture.get(3)), int(video_capture.get(4))))
-    modified60FPS_OutVideo = cv2.VideoWriter(namePath60FPS, fourcc, 60, (int(video_capture.get(3)), int(video_capture.get(4))))
+    output_video = cv2.VideoWriter(namePathOrigFPS, fourcc, fps, (int(video_capture.get(3)), int(video_capture.get(4))))
+    Out60_video = cv2.VideoWriter(namePath60FPS, fourcc, 60, (int(video_capture.get(3)), int(video_capture.get(4))))
 
     # Read the first frame
     # success, frame1 = video_capture.read()
 
 # -----------
     # Initialize frame buffer
+    # frame_buffer = [frame1] * numFramesToCompareTo
     frame_buffer = []
 
     # Read the first x number of frames into an array
@@ -153,7 +157,7 @@ def variableExposureInvertFunc(inputVideoName,outputFolder,numFramesToCompareTo)
             break
 
     # Display the number of frames read
-    print(f"DELAY BUFFER: Number of frames read: {len(frame_buffer)}")
+    print(f"Number of frames read: {len(frame_buffer)}")
 # -----------
 
     currentFramePos = numFramesToCompareTo + 1
@@ -182,21 +186,20 @@ def variableExposureInvertFunc(inputVideoName,outputFolder,numFramesToCompareTo)
             overlay = cv2.addWeighted(frame_to_compare, 0.5, inverted_frame, 0.5, 0)
 
             # Write the overlaid frame to the output video
-            originalFPS_OutVideo.write(overlay)
-            modified60FPS_OutVideo.write(overlay)
+            output_video.write(overlay)
+            Out60_video.write(overlay)
 
-            if show_live_output == True:
-                # Display the overlaid frame
-                cv2.imshow(f'CUSTOM {numFramesToCompareTo} frame Delay - Overlay', overlay)
+            # Display the overlaid frame
+            cv2.imshow(f'CUSTOM {numFramesToCompareTo} frame Delay - Overlay', overlay)
 
-                # Press 'q' to quit
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
+            # Press 'q' to quit
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
     # Release video capture and writer objects
     video_capture.release()
-    originalFPS_OutVideo.release()
-    modified60FPS_OutVideo.release()
+    output_video.release()
+    Out60_video.release()
 
     # Close all OpenCV windows
     cv2.destroyAllWindows()
@@ -217,26 +220,12 @@ if len(sys.argv) < 2:
 else: 
     # use function to get argument from command line
     thisVideo = returnVid()
-    currentDateTime = defang_datetime() # used to grab date and time to create output folder
+    currentDateTime = defang_datetime()
 
     # # Get the number of CPU cores -- in future can use this to apply muliprocessing
     # num_cpu_cores = os.cpu_count()
     # print("Number of CPU cores:", num_cpu_cores)
 
-# do they want to see the output live? Or run it headless?
-    user_input = input("Do you want to see live output from the motion extraction process? (yes/no): ")
-
-    if user_input.lower() == "no":
-        show_live_output = False
-    elif user_input.lower() != "yes":
-        print("Invalid input. Defaulting to live output.")
-
-    # Now, you can use show_live_output throughout your code
-    print("Show live output:", show_live_output)
-
-
-
-# choose what kind of delay you want for your extraction:
     chooseInvert = input("What kind of Invert do you want: PREVIOUS or CUSTOM? ")
     print(chooseInvert.upper())
     print('\n')
@@ -270,14 +259,14 @@ else:
 
 
         # create subfolder name to house output
-        subFolderName = f"Motion_Extraction--CUSTOM_@{fpsDelay}_Frame_Delay--From_{currentDateTime}"
+        subFolderName = f"Motion_Extraction--CUSTOM_FPS_@{fpsDelay}--From_{currentDateTime}"
         pathSubfolder = os.path.join(OUTPUT_FOLDER_NAME,subFolderName)
 
         # create subfolder
         createFolderIfNotExists(pathSubfolder)
 
         # execute function
-        variableExposureInvertFunc(thisVideo,pathSubfolder,int(fpsDelay))
+        variableExposureInvertFunc(thisVideo,pathSubfolder,fpsDelay)
 
         # at end, print my logo
         myLogo()
