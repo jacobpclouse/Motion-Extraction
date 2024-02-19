@@ -5,8 +5,8 @@ With a very simple trick you can extract the motion of a video. Uses python and 
 Ideas:
 - maybe combine the two while loops?
 - invert then immediatly overlay?
-
-- cut videos larger than like 3 minutes into chunks of 1 minutes, store in folder
+- check pervious frame in one video then x frames back in another video (shows slower movement)
+- cut videos larger than like 3 minutes into chunks of 1 minutes, store in folder [check multiprocessing attempt folder]
 - then use threading to individually loop through and invert videos
 - then you can paste it together at the end
 
