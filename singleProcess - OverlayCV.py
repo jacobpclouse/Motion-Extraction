@@ -11,7 +11,7 @@ from pathlib import Path
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # Variables
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-OUTPUT_FOLDER = 'OUTPUTS' # folder where all the output files should be stored
+OUTPUT_FOLDER_NAME = 'OUTPUTS' # folder where all the output files should be stored
 
 
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -29,7 +29,7 @@ def myLogo():
     print("Dedicated to Peter Zlomek and Harley Alderson III")
 
 # --- Function to create a folder if it does not exist ---
-def create_folder_if_not_exists(folder_path):
+def createFolderIfNotExists(folder_path):
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
         print(f"Folder '{folder_path}' created successfully.")
@@ -72,7 +72,7 @@ def returnVid():
 
 
 # --- Function to invert previous frame and compare to present ---
-def invertVideoFunc(inputVideoName):
+def invertVideoFunc(inputVideoName,outputFolder):
     # Open the video file
     # video_capture = cv2.VideoCapture('input_video.mp4')
     video_capture = cv2.VideoCapture(inputVideoName)
@@ -83,9 +83,16 @@ def invertVideoFunc(inputVideoName):
     # Get the codec of the input video
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
+    namePathOrigFPS = os.path.join(outputFolder,f'Out_{fps}fps_video--@DEFAULT_1_frame_delay.mp4')
+    namePath60FPS = os.path.join(outputFolder,f'Out_60fps_video--@DEFAULT_1_frame_delay.mp4')
+    # namePathOrigFPS = os.path.join(outputFolder,f'Out{fps}_video.mp4')
+    # namePath60FPS = os.path.join(outputFolder,f'Out60_video.mp4')
+
     # Define output video writer
-    output_video = cv2.VideoWriter(f'Out{fps}_video.mp4', fourcc, fps, (int(video_capture.get(3)), int(video_capture.get(4))))
-    Out60_video = cv2.VideoWriter('Out60_video.mp4', fourcc, 60, (int(video_capture.get(3)), int(video_capture.get(4))))
+    # output_video = cv2.VideoWriter(f'Out{fps}_video.mp4', fourcc, fps, (int(video_capture.get(3)), int(video_capture.get(4))))
+    # Out60_video = cv2.VideoWriter('Out60_video.mp4', fourcc, 60, (int(video_capture.get(3)), int(video_capture.get(4))))
+    originalFPS_OutVideo = cv2.VideoWriter(namePathOrigFPS, fourcc, fps, (int(video_capture.get(3)), int(video_capture.get(4))))
+    modified60FPS_OutVideo = cv2.VideoWriter(namePath60FPS, fourcc, 60, (int(video_capture.get(3)), int(video_capture.get(4))))
 
     # Read the first frame
     success, frame1 = video_capture.read()
@@ -103,23 +110,26 @@ def invertVideoFunc(inputVideoName):
             overlay = cv2.addWeighted(frame1, 0.5, inverted_frame, 0.5, 0)
 
             # Write the overlaid frame to the output video
-            output_video.write(overlay)
-            Out60_video.write(overlay)
+            originalFPS_OutVideo.write(overlay)
+            modified60FPS_OutVideo.write(overlay)
 
-            # # Display the overlaid frame
+            # maybe ask user if they want to see this?
+
+            # Display the overlaid frame
             # cv2.imshow('Overlay', overlay)
+            cv2.imshow('invertVideoFunc Overlay', overlay)
             
-            # # Press 'q' to quit
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
+            # Press 'q' to quit
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-            # # Update the previous frame
-            # frame1 = frame2
+            # Update the previous frame
+            frame1 = frame2
 
     # Release video capture and writer objects
     video_capture.release()
-    output_video.release()
-    Out60_video.release()
+    originalFPS_OutVideo.release()
+    modified60FPS_OutVideo.release()
 
     # Close all OpenCV windows
     cv2.destroyAllWindows()
@@ -128,7 +138,7 @@ def invertVideoFunc(inputVideoName):
 
 # -- Function to specify frame 'delay' -- aka compare present frame to user specfied frame 
 # think of like long exposure in camera - i want to compare present frame to 30 frames ago to see slower movements
-def variableExposureInvertFunc(inputVideoName, numFramesToCompareTo):
+def variableExposureInvertFunc(inputVideoName,outputFolder, numFramesToCompareTo):
     # Open the video file
     video_capture = cv2.VideoCapture(inputVideoName)
 
@@ -210,14 +220,52 @@ def variableExposureInvertFunc(inputVideoName, numFramesToCompareTo):
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 # MAIN
 # =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-delete_videos()
 
-thisVideo = returnVid()
+# # use function to find and delete any videos old videos if they exist
+# delete_videos()
 
+# create outputs Folder
+createFolderIfNotExists(OUTPUT_FOLDER_NAME)
 
+if len(sys.argv) < 2:
+    raise ValueError("ERROR: You need to provide the name of your target video as an argument when you run your code!")
+else: 
+    # use function to get argument from command line
+    thisVideo = returnVid()
+    currentDateTime = defang_datetime()
 
-# Get the number of CPU cores -- in future can use this to apply muliprocessing
-num_cpu_cores = os.cpu_count()
-print("Number of CPU cores:", num_cpu_cores)
+    # # Get the number of CPU cores -- in future can use this to apply muliprocessing
+    # num_cpu_cores = os.cpu_count()
+    # print("Number of CPU cores:", num_cpu_cores)
 
-# invertVideoFunc(thisVideo)
+    chooseInvert = input("What kind of Invert do you want: PREVIOUS or CUSTOM? ")
+    print(chooseInvert.upper())
+    print('\n')
+
+    # Catch statement to prevent invalid selections
+    while chooseInvert == '':
+        chooseInvert = input("Can't be left blank, please input either PREVIOUS or CUSTOM: ")
+
+    # execute PREVIOUS Invert
+    if chooseInvert.upper() == 'PREVIOUS':
+        # create subfolder name to house output
+        subFolderName = f"Motion_Extraction--PREVIOUS_OPTION--From_{currentDateTime}"
+        pathSubfolder = os.path.join(OUTPUT_FOLDER_NAME,subFolderName)
+
+        # create subfolder
+        createFolderIfNotExists(pathSubfolder)
+
+        # execute function
+        invertVideoFunc(thisVideo,pathSubfolder)
+
+        # at end, print my logo
+        myLogo()
+
+    # execute CUSTOM Invert ****
+    elif chooseInvert.upper() == 'CUSTOM':
+        # CUSTOMInvert()
+        print("MULTI")
+
+    # if nonsense, end the script
+    else:
+        print("Response Not Recognized, Ending Program...")

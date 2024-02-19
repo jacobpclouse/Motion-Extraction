@@ -3,7 +3,7 @@ venvName
 OLD
 VIDEO
 *.mp4
-OUTPUT
+OUTPUTS
 
 
 # Byte-compiled / optimized / DLL files
