@@ -25,7 +25,7 @@ def myLogo():
     print("    \ \/ _` |/ __/ _ \| '_ \   / /  | |/ _ \| | | / __|/ _ \ ")
     print(" /\_/ / (_| | (_| (_) | |_) | / /___| | (_) | |_| \__ \  __/ ")
     print(" \___/ \__,_|\___\___/|_.__/  \____/|_|\___/ \__,_|___/\___| ")
-    print("Dedicated to Peter Zlomek and Harley Alderson III")
+    print("Dedicated to Mary Clouse, Stephen Frost, and Harley Alderson III")
 
 # --- Function to create a folder if it does not exist ---
 def createFolderIfNotExists(folder_path):
