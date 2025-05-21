@@ -61,7 +61,7 @@ def get_venv_data(venv_dir=VIRT_ENV_NAME):
 
 # Install Packages using the virtual environment's pip with trusted hosts
 def pip_install_packages(packages,venv_dir=VIRT_ENV_NAME,extra_index_url=None, verbose=True, pre=False):
-    print(f"Install Packages in {venv_dir}'s pip using trusted hosts, please be patient:")
+    print(f"> Installing Packages in {venv_dir}'s pip using trusted hosts, please be patient!")
 
     pip_path, virt_env_python_path, activation_path, operating_sys = get_venv_data(venv_dir)
 
@@ -114,8 +114,9 @@ def pip_install_packages(packages,venv_dir=VIRT_ENV_NAME,extra_index_url=None, v
 
 # run a python script using the virtual environment's interpreter
 def run_script_in_venv(venv_dir,script_path, *args):
+    print("\n===========--------===========--------===========\n")
         # Run the target script if requested
-    print(f" Running Target Script: {script_path}")
+    print(f"> Running Target Script: {script_path}")
 
     pip_path, virt_env_python_path, activation_path, operating_sys = get_venv_data(venv_dir)
 
