@@ -165,4 +165,4 @@ if __name__ == "__main__":
         print("Powershell:")
         print("  python  .\Install_And_Run_Program.py --video example\ video.mp4")
         print("or")
-        print("  python  .\Install_And_Run_Program.py --verbose --venv TEST --video 'example video.mp4')
+        print("  python  .\Install_And_Run_Program.py --verbose --venv TEST --video 'example video.mp4'")
